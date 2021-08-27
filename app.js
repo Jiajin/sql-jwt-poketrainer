@@ -1,8 +1,9 @@
 const express = require("express");
 const db = require("./db/models/index");
 const app = express();
+const cookieParser = require("cookie-parser");
 app.use(express.json());
-
+app.use(cookieParser());
 // sync will make sure the that the database is connected and the models are properly setup on app startup
 db.sequelize.sync();
 const pokemonRouter = require("./router/pokemon.route");

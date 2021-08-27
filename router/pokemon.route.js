@@ -57,15 +57,19 @@ router.post("/update/:id", async (req, res, next) => {
     const requestId = req.params.id;
     const data = req.body;
 
-    const [count, updateObject] = await db.Pokemon.update(data, {
-      returning: true,
-      raw: true,
-      where: { id: requestId },
-    });
+    const pokeToUpdate = await db.Pokemon.findByPk(requestId);
+    if (pokeToUpdate === null) res.sendStatus(404);
+    else {
+      const [count, updateObject] = await db.Pokemon.update(data, {
+        returning: true,
+        raw: true,
+        where: { id: requestId },
+      });
 
-    console.log("No. of updates: " + count);
-    console.log(updateObject);
-    res.status(200).send("No. of records updated: " + count);
+      // console.log("No. of updates: " + count);
+      // console.log(updateObject);
+      res.status(200).send(pokeToUpdate);
+    }
   } catch (error) {
     next(error);
   }
