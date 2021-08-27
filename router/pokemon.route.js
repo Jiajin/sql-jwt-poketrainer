@@ -51,16 +51,36 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-// router.put("/:category/:hp", async (req, res, next) => {
+//Update method
+router.post("/update/:id", async (req, res, next) => {
+  try {
+    const requestId = req.params.id;
+    const data = req.body;
+
+    const [count, updateObject] = await db.Pokemon.update(data, {
+      returning: true,
+      raw: true,
+      where: { id: requestId },
+    });
+
+    console.log("No. of updates: " + count);
+    console.log(updateObject);
+    res.status(200).send("No. of records updated: " + count);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//Sample Put code as replacement for above Update
+// router.put("/:id", async (req, res, next) => {
 //   try {
-//     const hp = req.params.hp;
-//     const category = req.params.category;
+//     const pokemonId = req.params.id;
+//     const pokemonToUpdate = await db.Pokemon.findByPk(pokemonId);
 
-//     const result = await db.Pokemon.update({
+//     if (pokemonToUpdate === null) return res.sendStatus(404);
+//     await pokemonToUpdate.update(req.body);
 
-//     });
-//     console.log(result);
-//     res.status(200).send("No. of records updated: " + result);
+//     res.json(pokemonToUpdate);
 //   } catch (error) {
 //     next(error);
 //   }
