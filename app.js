@@ -1,5 +1,9 @@
 const express = require("express");
+const db = require("./db/models/index");
 const app = express();
+
+// sync will make sure the that the database is connected and the models are properly setup on app startup
+db.sequelize.sync();
 
 app.use(express.json());
 
