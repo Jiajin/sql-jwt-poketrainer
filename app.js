@@ -13,6 +13,8 @@ app.use(cookieParser());
 const path = require("path");
 const apiRouter = express.Router();
 
+const cors = require("cors");
+app.use(cors());
 const pokemonRouter = require("./router/pokemon.route");
 const trainersRouter = require("./router/trainers.route");
 //app.use("/pokemon/", pokemonRouter);
