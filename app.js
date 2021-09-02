@@ -10,11 +10,22 @@ const app = express();
 app.use(express.json());
 
 app.use(cookieParser());
+const path = require("path");
+const apiRouter = express.Router();
 
 const pokemonRouter = require("./router/pokemon.route");
-app.use("/pokemon/", pokemonRouter);
 const trainersRouter = require("./router/trainers.route");
-app.use("/trainers", trainersRouter);
+//app.use("/pokemon/", pokemonRouter);
+//app.use("/trainers", trainersRouter);
+app.use("/api", apiRouter);
+apiRouter.use("/pokemon", pokemonRouter);
+apiRouter.use("/trainers", trainersRouter);
+
+// allows us to deploy both front/backend to 1 Heroku app
+app.use(express.static(path.resolve("client", "build")));
+app.get("*", (req, res) =>
+  res.sendFile(path.resolve("client", "build", "index.html"))
+);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
