@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../db/models/index.js");
 const { Op } = require("sequelize");
+const Sequelize = require("sequelize");
 
 const { auth } = require("../middleware/auth");
 const bcrypt = require("bcryptjs");
@@ -92,6 +93,49 @@ router.post("/", async (req, res, next) => {
   try {
     const newTrainer = await db.Trainer.create(req.body);
     res.send(newTrainer);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.get("/:id/pokemons", auth, async (req, res, next) => {
+  try {
+    const trainerId = req.params.id;
+
+    //eager loading
+    const trainerProfile = await db.Trainer.findOne({
+      where: { id: trainerId },
+      include: { model: db.Pokemon },
+    });
+
+    console.log(trainerProfile);
+
+    res.send(trainerProfile);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.get("/getPokemon", auth, async (req, res, next) => {
+  try {
+    const trainer = await db.Trainer.findOne({
+      where: {
+        username: req.user.username,
+      },
+      raw: true,
+    });
+    const trainerId = trainer.id;
+    //eager loading
+    const trainerProfile = await db.Trainer.findOne({
+      where: { id: trainerId },
+      include: { model: db.Pokemon },
+    });
+
+    console.log(trainerProfile);
+
+    res.send(trainerProfile.Pokemons);
   } catch (err) {
     console.error(err);
     next(err);
